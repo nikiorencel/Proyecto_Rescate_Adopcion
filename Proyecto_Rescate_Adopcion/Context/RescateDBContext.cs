@@ -15,5 +15,6 @@ namespace Proyecto_Rescate_Adopcion.Context
         }
 
         public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<Proyecto_Rescate_Adopcion.Models.Animal> Animal { get; set; } = default!;
     }
 }
