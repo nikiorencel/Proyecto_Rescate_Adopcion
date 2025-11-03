@@ -11,7 +11,7 @@ using Proyecto_Rescate_Adopcion.Context;
 namespace Proyecto_Rescate_Adopcion.Migrations
 {
     [DbContext(typeof(RescateDBContext))]
-    [Migration("20251103185639_CreateDB")]
+    [Migration("20251103230819_CreateDB")]
     partial class CreateDB
     {
         /// <inheritdoc />
@@ -23,6 +23,34 @@ namespace Proyecto_Rescate_Adopcion.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Proyecto_Rescate_Adopcion.Models.Animal", b =>
+                {
+                    b.Property<int>("IdSolicitud")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdSolicitud"));
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("NombreAnimal")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("UsuarioSolicitante")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("IdSolicitud");
+
+                    b.ToTable("Animal");
+                });
 
             modelBuilder.Entity("Proyecto_Rescate_Adopcion.Models.Usuario", b =>
                 {
