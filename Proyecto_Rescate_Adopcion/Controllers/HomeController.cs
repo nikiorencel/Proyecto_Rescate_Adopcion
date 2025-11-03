@@ -1,6 +1,7 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Proyecto_Rescate_Adopcion.Models;
+using System.Diagnostics;
 
 namespace Proyecto_Rescate_Adopcion.Controllers
 {

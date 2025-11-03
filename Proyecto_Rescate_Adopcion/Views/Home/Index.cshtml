@@ -1,8 +1,89 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
+    Layout = "_Layout";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<link rel="stylesheet" href="~/css/home.css" />
+
+<div class="container">
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-card">
+            <h2>Encuentra a tu nueva mascota</h2>
+            <p>Explora mascotas que necesitan un hogar y gestiona el proceso de adopción.</p>
+            <form asp-controller="Animal" asp-action="Index" method="get" class="search">
+                <input type="text" name="localidad" placeholder="Localidad" />
+                <button type="submit" title="Buscar">🔍</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- ACCESOS RÁPIDOS -->
+    <section class="quick">
+        <div class="qcard">
+            <div class="qicon">↗</div>
+            <div>
+                <p class="qtitle">Registrar Mascota</p>
+                <p class="qdesc">Da de alta mascotas en adopción con facilidad.</p>
+            </div>
+        </div>
+        <div class="qcard">
+            <div class="qicon">📄</div>
+            <div>
+                <p class="qtitle">Solicitudes de Adopción</p>
+                <p class="qdesc">Revisa y gestiona las solicitudes pendientes.</p>
+            </div>
+        </div>
+        <div class="qcard">
+            <div class="qicon">🐾</div>
+            <div>
+                <p class="qtitle">Historial de Adopciones</p>
+                <p class="qdesc">Consulta el estado y tu historial.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MASCOTAS EN ADOPCIÓN -->
+    <h3>Mascotas en Adopción</h3>
+    <section class="grid">
+        <article class="card">
+            <img src="~/Perro1.png" alt="Luna" />
+            <div class="card-body">
+                <p class="name">Luna</p>
+                <p class="meta">2 años</p>
+                <p class="meta">Buenos Aires</p>
+            </div>
+            <button class="btn">Solicitar adopción</button>
+        </article>
+
+        <article class="card">
+            <img src="~/Gato1.png" alt="Simba" />
+            <div class="card-body">
+                <p class="name">Simba</p>
+                <p class="meta">3 años</p>
+                <p class="meta">Córdoba</p>
+            </div>
+            <button class="btn">Solicitar adopción</button>
+        </article>
+
+        <article class="card">
+            <img src="~/Perro2.png" alt="Mia" />
+            <div class="card-body">
+                <p class="name">Mia</p>
+                <p class="meta">5 años</p>
+                <p class="meta">Rosario</p>
+            </div>
+            <button class="btn">Solicitar adopción</button>
+        </article>
+
+        <article class="card">
+            <img src="~/Conejo1.png" alt="Coco" />
+            <div class="card-body">
+                <p class="name">Coco</p>
+                <p class="meta">1 año</p>
+                <p class="meta">Mendoza</p>
+            </div>
+            <button class="btn">Solicitar adopción</button>
+        </article>
+    </section>
 </div>
