@@ -50,6 +50,7 @@ body {
     padding: 24px;
 }
 
+
 /* --- HERO --- */
 
 
@@ -364,3 +365,29 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+button.btn.is-disabled,
+button.btn:disabled,
+button[disabled].btn,
+.card button.btn.is-disabled,
+.card button.btn:disabled,
+.card button[disabled].btn {
+    background: #d9d9d9 !important;
+    background-image: none !important;
+    color: #666 !important;
+    border-color: #ccc !important;
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+    /* Por si hay un :hover que lo pisa */
+    button.btn.is-disabled:hover,
+    button.btn:disabled:hover,
+    .card button.btn.is-disabled:hover,
+    .card button.btn:disabled:hover {
+        background: #d9d9d9 !important;
+        color: #666 !important;
+    }

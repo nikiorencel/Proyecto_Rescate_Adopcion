@@ -8,6 +8,7 @@ using System.Collections.Generic;
 
 namespace Proyecto_Rescate_Adopcion.Context
 {
+
     public class RescateDBContext : DbContext
     {
         public RescateDBContext(DbContextOptions<RescateDBContext> options) : base(options)
@@ -16,5 +17,19 @@ namespace Proyecto_Rescate_Adopcion.Context
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Animal> Animales { get; set; }
         public DbSet<Adopcion> Adopciones { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+         
+            modelBuilder.Entity<Adopcion>()
+                .HasIndex(a => new { a.UsuarioId, a.AnimalId })
+                .IsUnique()
+                .HasFilter("[Estado] = 'Pendiente'");
+
+            
+        }
     }
+
 }

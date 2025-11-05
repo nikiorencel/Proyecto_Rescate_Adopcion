@@ -3,7 +3,18 @@
     Layout = "_Layout";
 }
 
-<link rel="stylesheet" href="~/css/home.css" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+@{
+    var pendientes = ViewBag.Pendientes as HashSet<int> ?? new HashSet<int>();
+    Func<int, bool> P = id => pendientes.Contains(id);
+
+    Func<int, bool> YaPend = id => pendientes.Contains(id);
+    Func<int, string> BtnTxt = id => YaPend(id) ? "Ya solicitada" : "Solicitar adopción";
+    Func<int, string> BtnCls = id => YaPend(id) ? "btn disabled" : "btn";
+    Func<int, string> BtnAttr = id => YaPend(id) ? "disabled=\"disabled\" aria-disabled=\"true\" tabindex=\"-1\"" : "";
+    Func<int, string> BtnTtl = id => YaPend(id) ? "Ya tenés una solicitud pendiente" : "Solicitar adopción";
+}
 
 <div class="container">
     <!-- HERO -->
@@ -46,6 +57,7 @@
     </section>
 
     <!-- MASCOTAS EN ADOPCIÓN -->
+  
     <h3>Mascotas en Adopción</h3>
     <section class="grid">
         <article class="card">
@@ -55,10 +67,18 @@
                 <p class="meta">2 años</p>
                 <p class="meta">Buenos Aires</p>
             </div>
+
             <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
                 @Html.AntiForgeryToken()
-                <input type="hidden" name="animalId" value="5" />  
-                <button type="submit" class="btn">Solicitar adopción</button>
+                <input type="hidden" name="animalId" value="5" />
+
+                <button type="submit"
+                        class="btn @(P(5) ? "is-disabled" : "")"
+                        disabled="@(P(5) ? "disabled" : null)"
+                        aria-disabled="@(P(5) ? "true" : "false")"
+                        title="@(P(5) ? "Ya tenés una solicitud pendiente" : "Solicitar adopción")">
+                    @(P(5) ? "Ya solicitada" : "Solicitar adopción")
+                </button>
             </form>
         </article>
 
@@ -69,10 +89,17 @@
                 <p class="meta">3 años</p>
                 <p class="meta">Córdoba</p>
             </div>
-            <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
+               <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
                 @Html.AntiForgeryToken()
-                <input type="hidden" name="animalId" value="6" />  
-                <button type="submit" class="btn">Solicitar adopción</button>
+                <input type="hidden" name="animalId" value="6" />
+
+                <button type="submit"
+                        class="btn @(P(6) ? "is-disabled" : "")"
+                        disabled="@(P(6) ? "disabled" : null)"
+                        aria-disabled="@(P(6) ? "true" : "false")"
+                        title="@(P(6) ? "Ya tenés una solicitud pendiente" : "Solicitar adopción")">
+                    @(P(6) ? "Ya solicitada" : "Solicitar adopción")
+                </button>
             </form>
         </article>
 
@@ -83,10 +110,18 @@
                 <p class="meta">5 años</p>
                 <p class="meta">Rosario</p>
             </div>
+           
             <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
                 @Html.AntiForgeryToken()
-                <input type="hidden" name="animalId" value="7" /> 
-                <button type="submit" class="btn">Solicitar adopción</button>
+                <input type="hidden" name="animalId" value="7" />
+
+                <button type="submit"
+                        class="btn @(P(7) ? "is-disabled" : "")"
+                        disabled="@(P(7) ? "disabled" : null)"
+                        aria-disabled="@(P(7) ? "true" : "false")"
+                        title="@(P(7) ? "Ya tenés una solicitud pendiente" : "Solicitar adopción")">
+                    @(P(7) ? "Ya solicitada" : "Solicitar adopción")
+                </button>
             </form>
         </article>
 
@@ -97,10 +132,18 @@
                 <p class="meta">1 año</p>
                 <p class="meta">Mendoza</p>
             </div>
+
             <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
                 @Html.AntiForgeryToken()
-                <input type="hidden" name="animalId" value="8" /> 
-                <button type="submit" class="btn">Solicitar adopción</button>
+                <input type="hidden" name="animalId" value="8" />
+
+                <button type="submit"
+                        class="btn @(P(8) ? "is-disabled" : "")"
+                        disabled="@(P(8) ? "disabled" : null)"
+                        aria-disabled="@(P(8) ? "true" : "false")"
+                        title="@(P(8) ? "Ya tenés una solicitud pendiente" : "Solicitar adopción")">
+                    @(P(8) ? "Ya solicitada" : "Solicitar adopción")
+                </button>
             </form>
         </article>
     </section>

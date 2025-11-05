@@ -17,10 +17,27 @@ namespace Proyecto_Rescate_Adopcion.Controllers
             var usuarioId = HttpContext.Session.GetInt32("UsuarioId");
             if (usuarioId == null) return RedirectToAction("Login", "Cuenta");
 
-            var s = new Adopcion { UsuarioId = usuarioId.Value, AnimalId = animalId };
+            bool yaExistePendiente = _ctx.Adopciones.Any(a =>
+                a.UsuarioId == usuarioId.Value &&
+                a.AnimalId == animalId &&
+               (a.Estado ?? "Pendiente") == "Pendiente");
+
+            if (yaExistePendiente)
+            {
+                TempData["msg"] = "Ya tenés una solicitud pendiente para esta mascota.";
+                return RedirectToAction("MisSolicitudes");
+            }
+
+            var s = new Adopcion
+            {
+                UsuarioId = usuarioId.Value,
+                AnimalId = animalId,
+                Estado = "Pendiente"
+            };
             _ctx.Adopciones.Add(s);
             _ctx.SaveChanges();
 
+            TempData["msg"] = "Solicitud registrada.";
             return RedirectToAction(nameof(Confirmacion), new { id = s.Id });
         }
 

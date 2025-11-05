@@ -9,6 +9,8 @@ builder.Services.AddDbContext<RescateDBContext>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddSession(opt =>
 {
     opt.IdleTimeout = TimeSpan.FromHours(2);
