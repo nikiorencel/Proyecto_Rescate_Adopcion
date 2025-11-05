@@ -13,10 +13,8 @@ namespace Proyecto_Rescate_Adopcion.Context
         public RescateDBContext(DbContextOptions<RescateDBContext> options) : base(options)
         {
         }
-
         public DbSet<Usuario> Usuarios { get; set; }
-        public DbSet<Proyecto_Rescate_Adopcion.Models.Animal> Animal { get; set; } = default!;
-
+        public DbSet<Animal> Animales { get; set; }
         public DbSet<Adopcion> Adopciones { get; set; }
     }
 }

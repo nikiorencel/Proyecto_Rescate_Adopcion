@@ -1,0 +1,45 @@
+﻿@model IEnumerable<Proyecto_Rescate_Adopcion.Models.Adopcion>
+
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<div class="page-solicitudes">
+    <div class="solicitudes-card">
+        <div class="solicitudes-header">
+            <img src="~/Logo.png" alt="" style="width:28px;height:28px;border-radius:8px;">
+            <h2 class="solicitudes-title">Mis solicitudes de adopción</h2>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">Aún no hiciste solicitudes.</div>
+        }
+        else
+        {
+            <table class="solicitudes-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Mascota</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in Model)
+                    {
+                        var estado = (s.Estado ?? "Pendiente").ToLower();
+                        var cls = estado switch
+                        {
+                            "aprobada" => "badge badge--aprobada",
+                            "rechazada" => "badge badge--rechazada",
+                            _ => "badge badge--pendiente"
+                        };
+                        <tr>
+                            <td>@s.FechaSolicitud.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@s.Animal?.NombreAnimal</td>  @* usa .Animal si tu propiedad se llama así *@
+                            <td><span class="@cls">@s.Estado</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

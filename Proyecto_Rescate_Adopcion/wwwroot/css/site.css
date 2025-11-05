@@ -183,6 +183,112 @@ body {
     font-size: 14px;
 }
 
+
+/* ====== Mis Solicitudes ====== */
+.page-solicitudes {
+    max-width: 980px;
+    margin: 24px auto 60px;
+    padding: 0 20px;
+}
+
+/* card contenedor */
+.solicitudes-card {
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 16px;
+    box-shadow: 0 12px 28px rgba(0,0,0,.06);
+    overflow: hidden;
+}
+
+/* header */
+.solicitudes-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 22px;
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.solicitudes-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+/* tabla */
+.solicitudes-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .solicitudes-table th,
+    .solicitudes-table td {
+        padding: 14px 18px;
+        text-align: left;
+        border-bottom: 1px solid #f4f4f4;
+        vertical-align: middle;
+    }
+
+    .solicitudes-table th {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #6b6b6b;
+        text-transform: uppercase;
+        letter-spacing: .02em;
+        background: #fafafa;
+    }
+
+    .solicitudes-table tr:hover td {
+        background: #fff9f3; /* leve highlight */
+    }
+
+/* chip de estado */
+.badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.badge--pendiente {
+    background: #fff0e6;
+    color: #cc5a00;
+}
+
+.badge--aprobada {
+    background: #e8fbef;
+    color: #1b7a3e;
+}
+
+.badge--rechazada {
+    background: #ffe8ea;
+    color: #b4232a;
+}
+
+/* fecha compacta en móvil */
+@media (max-width: 640px) {
+    .solicitudes-header {
+        padding: 14px 16px;
+    }
+
+    .solicitudes-title {
+        font-size: 18px;
+    }
+
+    .solicitudes-table th, .solicitudes-table td {
+        padding: 12px 14px;
+    }
+}
+
+/* estado vacío */
+.empty-state {
+    padding: 28px;
+    text-align: center;
+    color: #777;
+}
+
 /* --- GRID DE MASCOTAS --- */
 .grid {
     display: grid;

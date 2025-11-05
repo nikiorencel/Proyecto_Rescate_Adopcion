@@ -30,7 +30,9 @@
         <div class="qcard">
             <div class="qicon">📄</div>
             <div>
-                <p class="qtitle">Solicitudes de Adopción</p>
+                <a class="qtitle" asp-controller="Adopcion" asp-action="MisSolicitudes">
+                    Solicitudes de Adopción
+                </a>
                 <p class="qdesc">Revisa y gestiona las solicitudes pendientes.</p>
             </div>
         </div>
@@ -55,7 +57,7 @@
             </div>
             <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
                 @Html.AntiForgeryToken()
-                <input type="hidden" name="animalId" value="1" />  
+                <input type="hidden" name="animalId" value="5" />  
                 <button type="submit" class="btn">Solicitar adopción</button>
             </form>
         </article>
@@ -69,7 +71,7 @@
             </div>
             <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
                 @Html.AntiForgeryToken()
-                <input type="hidden" name="animalId" value="2" />  
+                <input type="hidden" name="animalId" value="6" />  
                 <button type="submit" class="btn">Solicitar adopción</button>
             </form>
         </article>
@@ -83,7 +85,7 @@
             </div>
             <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
                 @Html.AntiForgeryToken()
-                <input type="hidden" name="animalId" value="3" /> 
+                <input type="hidden" name="animalId" value="7" /> 
                 <button type="submit" class="btn">Solicitar adopción</button>
             </form>
         </article>
@@ -97,7 +99,7 @@
             </div>
             <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
                 @Html.AntiForgeryToken()
-                <input type="hidden" name="animalId" value="4" /> 
+                <input type="hidden" name="animalId" value="8" /> 
                 <button type="submit" class="btn">Solicitar adopción</button>
             </form>
         </article>

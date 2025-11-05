@@ -8,19 +8,11 @@ namespace Proyecto_Rescate_Adopcion.Models
     public class Animal
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int IdSolicitud { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string NombreAnimal { get; set; }
-
-        [Required]
-        [StringLength(100)]
-        public string UsuarioSolicitante { get; set; }
-
-        [Required]
-        [StringLength(30)]
-        public string Estado { get; set; }
+        public int IdSolicitud { get; set; }     // PK
+        public string? NombreAnimal { get; set; }
+        public string? Localidad { get; set; }
+        public string? Estado { get; set; }
+        public string? UsuarioSolicitante { get; set; }
+        public ICollection<Adopcion>? Adopciones { get; set; }
     }
 }

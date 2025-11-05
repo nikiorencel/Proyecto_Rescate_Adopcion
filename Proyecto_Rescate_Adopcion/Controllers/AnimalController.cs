@@ -1,157 +1,129 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Proyecto_Rescate_Adopcion.Context;
 using Proyecto_Rescate_Adopcion.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Proyecto_Rescate_Adopcion.Controllers
 {
     public class AnimalController : Controller
     {
-        private readonly RescateDBContext _context;
+        private readonly RescateDBContext _ctx;
+        public AnimalController(RescateDBContext ctx) => _ctx = ctx;
 
-        public AnimalController(RescateDBContext context)
+        // GET: /Animal
+        // Soporta filtros opcionales: ?localidad=...&estado=Disponible
+        public async Task<IActionResult> Index(string? localidad, string? estado)
         {
-            _context = context;
+            var q = _ctx.Animales.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(localidad))
+                q = q.Where(a => a.Localidad!.Contains(localidad));
+
+            if (!string.IsNullOrWhiteSpace(estado))
+                q = q.Where(a => a.Estado == estado);
+
+            // Sugerido: listar disponibles primero
+            q = q.OrderBy(a => a.NombreAnimal);
+
+            return View(await q.ToListAsync());
         }
 
-        // GET: Animal
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Animal.ToListAsync());
-        }
-
-        // GET: Animal/Details/5
+        // GET: /Animal/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var animal = await _context.Animal
+            var animal = await _ctx.Animales
                 .FirstOrDefaultAsync(m => m.IdSolicitud == id);
-            if (animal == null)
-            {
-                return NotFound();
-            }
+            if (animal == null) return NotFound();
 
             return View(animal);
         }
 
-        // GET: Animal/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+        // GET: /Animal/Create
+        public IActionResult Create() => View();
 
-        // POST: Animal/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: /Animal/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdSolicitud,NombreAnimal,UsuarioSolicitante,Estado")] Animal animal)
+        public async Task<IActionResult> Create(
+            [Bind("IdSolicitud,NombreAnimal,Especie,Raza,Localidad,Estado,UsuarioSolicitante")]
+            Animal animal)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(animal);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(animal);
+            if (!ModelState.IsValid) return View(animal);
+
+            // Valor por defecto si tu modelo lo necesita
+            animal.Estado ??= "Disponible";
+
+            _ctx.Add(animal);
+            await _ctx.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: Animal/Edit/5
+        // GET: /Animal/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var animal = await _context.Animal.FindAsync(id);
-            if (animal == null)
-            {
-                return NotFound();
-            }
+            var animal = await _ctx.Animales.FindAsync(id);
+            if (animal == null) return NotFound();
+
             return View(animal);
         }
 
-        // POST: Animal/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: /Animal/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdSolicitud,NombreAnimal,UsuarioSolicitante,Estado")] Animal animal)
+        public async Task<IActionResult> Edit(int id,
+            [Bind("IdSolicitud,NombreAnimal,Especie,Raza,Localidad,Estado,UsuarioSolicitante")]
+            Animal animal)
         {
-            if (id != animal.IdSolicitud)
+            if (id != animal.IdSolicitud) return NotFound();
+            if (!ModelState.IsValid) return View(animal);
+
+            try
             {
-                return NotFound();
+                _ctx.Update(animal);
+                await _ctx.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!AnimalExists(animal.IdSolicitud)) return NotFound();
+                throw;
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(animal);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AnimalExists(animal.IdSolicitud))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(animal);
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: Animal/Delete/5
+        // GET: /Animal/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var animal = await _context.Animal
+            var animal = await _ctx.Animales
                 .FirstOrDefaultAsync(m => m.IdSolicitud == id);
-            if (animal == null)
-            {
-                return NotFound();
-            }
+            if (animal == null) return NotFound();
 
             return View(animal);
         }
 
-        // POST: Animal/Delete/5
+        // POST: /Animal/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var animal = await _context.Animal.FindAsync(id);
+            var animal = await _ctx.Animales.FindAsync(id);
             if (animal != null)
             {
-                _context.Animal.Remove(animal);
+                _ctx.Animales.Remove(animal);
+                await _ctx.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AnimalExists(int id)
-        {
-            return _context.Animal.Any(e => e.IdSolicitud == id);
-        }
+        private bool AnimalExists(int id) =>
+            _ctx.Animales.Any(e => e.IdSolicitud == id);
     }
 }
