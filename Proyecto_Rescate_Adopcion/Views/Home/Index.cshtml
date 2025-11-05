@@ -53,7 +53,11 @@
                 <p class="meta">2 años</p>
                 <p class="meta">Buenos Aires</p>
             </div>
-            <button class="btn">Solicitar adopción</button>
+            <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="animalId" value="1" />  
+                <button type="submit" class="btn">Solicitar adopción</button>
+            </form>
         </article>
 
         <article class="card">
@@ -63,7 +67,11 @@
                 <p class="meta">3 años</p>
                 <p class="meta">Córdoba</p>
             </div>
-            <button class="btn">Solicitar adopción</button>
+            <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="animalId" value="2" />  
+                <button type="submit" class="btn">Solicitar adopción</button>
+            </form>
         </article>
 
         <article class="card">
@@ -73,7 +81,11 @@
                 <p class="meta">5 años</p>
                 <p class="meta">Rosario</p>
             </div>
-            <button class="btn">Solicitar adopción</button>
+            <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="animalId" value="3" /> 
+                <button type="submit" class="btn">Solicitar adopción</button>
+            </form>
         </article>
 
         <article class="card">
@@ -83,7 +95,11 @@
                 <p class="meta">1 año</p>
                 <p class="meta">Mendoza</p>
             </div>
-            <button class="btn">Solicitar adopción</button>
+            <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="animalId" value="4" /> 
+                <button type="submit" class="btn">Solicitar adopción</button>
+            </form>
         </article>
     </section>
 </div>

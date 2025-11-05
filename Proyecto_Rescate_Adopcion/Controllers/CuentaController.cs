@@ -19,18 +19,25 @@ namespace Proyecto_Rescate_Adopcion.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            // Login básico (sin identidad todavía):
-            var ok = _context.Usuarios
-                .Any(u => u.Email == model.Email && u.Contrasenia == model.Contrasenia);
+            var u = _context.Usuarios
+                .FirstOrDefault(x => x.Email == model.Email && x.Contrasenia == model.Contrasenia);
 
-            if (!ok)
+            if (u == null)
             {
                 ViewBag.Error = "Correo o contraseña incorrectos.";
                 return View(model);
             }
 
-            // TODO: setear sesión/cookie si lo necesitas
+            HttpContext.Session.SetInt32("UsuarioId", u.IdUsuario);
+            HttpContext.Session.SetString("UsuarioNombre", u.Nombre);
+
             return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
         }
     }
 }
