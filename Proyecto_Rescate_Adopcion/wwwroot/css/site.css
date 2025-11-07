@@ -629,3 +629,113 @@ button[disabled].btn,
 .slider .next {
     right: -12px;
 }
+
+.alert {
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+}
+
+    .alert.success {
+        background-color: #e8fbef;
+        color: #1b7a3e;
+        border: 1px solid #b2e3c6;
+        animation: fadeIn .5s ease;
+    }
+
+    .alert.warn {
+        background-color: #fff7e6;
+        color: #9a5b00;
+        border: 1px solid #ffd9a3;
+        animation: fadeIn .5s ease;
+    }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Centrar el botón dentro de cada card */
+/* --- Solo centrar el botón "Ver detalles" --- */
+.card .link-detalle {
+    display: block;
+    margin: 14px auto 10px auto; /* centrado horizontal */
+    width: fit-content; /* se ajusta al tamaño del texto */
+    padding: 10px 22px;
+    background: #ff7f50;
+    color: #fff;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    transition: all 0.25s ease;
+}
+
+    .card .link-detalle:hover {
+        background: #ff9966;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+/* link del nombre en MisSolicitudes */
+.link-nombre {
+    color: #ff7f50;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+    .link-nombre:hover {
+        color: #ff9966;
+        text-decoration: underline;
+    }
+
+/* Tabla solicitudes: alineado sólido */
+.solicitudes-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .solicitudes-table th,
+    .solicitudes-table td {
+        padding: 14px 18px;
+        vertical-align: middle;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+        /* Columna 1: fecha con ancho fijo y sin salto */
+        .solicitudes-table td:nth-child(1),
+        .solicitudes-table th:nth-child(1) {
+            width: 210px;
+            white-space: nowrap;
+        }
+
+        /* Columna 3: estado centrado (opcional) */
+        .solicitudes-table td:nth-child(3),
+        .solicitudes-table th:nth-child(3) {
+            width: 160px;
+            text-align: left; /* o center si preferís */
+        }
+
+/* Link del nombre */
+.link-nombre {
+    color: #ff7f50;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color .2s ease;
+}
+
+    .link-nombre:hover {
+        color: #ff9966;
+        text-decoration: underline;
+    }

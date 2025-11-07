@@ -8,6 +8,20 @@
             <h2 class="solicitudes-title">Mis solicitudes de adopción</h2>
         </div>
 
+        @{
+            var ok = TempData["ok"] as string;
+            var msg = TempData["msg"] as string;
+        }
+
+        @if (!string.IsNullOrEmpty(ok))
+        {
+            <div class="alert success" id="toast-ok">@ok</div>
+        }
+        @if (!string.IsNullOrEmpty(msg))
+        {
+            <div class="alert warn" id="toast-warn">@msg</div>
+        }
+
         @if (!Model.Any())
         {
             <div class="empty-state">Aún no hiciste solicitudes.</div>
@@ -32,9 +46,23 @@
                             "rechazada" => "badge badge--rechazada",
                             _ => "badge badge--pendiente"
                         };
+
                         <tr>
+                            <!-- 1) FECHA -->
                             <td>@s.FechaSolicitud.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td>@s.Animal?.NombreAnimal</td>  @* usa .Animal si tu propiedad se llama así *@
+
+                            <!-- 2) MASCOTA (link al detalle con returnUrl) -->
+                            <td>
+                                <a asp-controller="Animal"
+                                   asp-action="Details"
+                                   asp-route-id="@s.Animal!.IdSolicitud"
+                                   asp-route-returnUrl="@Url.Action("MisSolicitudes", "Adopcion")"
+                                   class="link-nombre">
+                                    @s.Animal!.NombreAnimal
+                                </a>
+                            </td>
+
+                            <!-- 3) ESTADO -->
                             <td><span class="@cls">@s.Estado</span></td>
                         </tr>
                     }

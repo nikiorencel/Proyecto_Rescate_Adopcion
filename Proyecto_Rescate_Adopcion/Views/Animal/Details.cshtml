@@ -1,36 +1,56 @@
-﻿@model Proyecto_Rescate_Adopcion.Models.Animal
+﻿@model Proyecto_Rescate_Adopcion.Models.AnimalDetalle
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Model.Animal.NombreAnimal;
+    Layout = "_Layout";
+    string Foto(string? f) => string.IsNullOrWhiteSpace(f) ? Url.Content("~/placeholder.jpg") : f!;
+    string EdadTxt(int? e) => (e ?? 0) == 1 ? "1 año" : $"{(e ?? 0)} años";
+    string SexoTxt(string? s) => string.IsNullOrWhiteSpace(s) ? "Sexo: sin definir" : $"Sexo: {s}";
 }
 
-<h1>Details</h1>
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
-<div>
-    <h4>Animal</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NombreAnimal)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NombreAnimal)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UsuarioSolicitante)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UsuarioSolicitante)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Estado)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Estado)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.IdSolicitud">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="container" style="max-width:980px;margin:24px auto;">
+    <div class="solicitudes-card" style="overflow:hidden;">
+        <div class="solicitudes-header">
+            <img src="~/Logo.png" alt="" style="width:28px;height:28px;border-radius:8px;">
+            <h2 class="solicitudes-title">@Model.Animal.NombreAnimal</h2>
+        </div>
+
+        <div style="display:grid;grid-template-columns:360px 1fr;gap:22px;padding:18px;">
+            <img src="@Foto(Model.Animal.FotoUrl)" alt="@Model.Animal.NombreAnimal"
+                 style="width:100%;height:280px;object-fit:cover;border-radius:12px;border:1px solid #eee;" />
+
+            <div>
+                <p class="meta" style="margin:0 0 6px;">@EdadTxt(Model.Animal.Edad)</p>
+                <p class="meta" style="margin:0 0 6px;">@SexoTxt(Model.Animal.Sexo)</p>
+                <p class="meta" style="margin:0 0 6px;">@Model.Animal.Especie</p>
+                <p class="meta" style="margin:0 0 6px;">@Model.Animal.Localidad</p>
+                <p style="margin:12px 0 18px;color:#444;">
+                    @(string.IsNullOrWhiteSpace(Model.Animal.Descripcion)
+                                        ? "Sin descripción."
+                                        : Model.Animal.Descripcion)
+                </p>
+
+                <a href="@(ViewBag.ReturnUrl ?? Url.Action("Index", "Home"))"
+                   class="btn"
+                   style="background:#bbb;color:#222;">
+                    Volver
+                </a>
+
+                    <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="animalId" value="@Model.Animal.IdSolicitud" />
+                        <button type="submit"
+                                class="btn @(Model.YaPendiente ? "is-disabled" : "")"
+                                disabled="@(Model.YaPendiente ? "disabled" : null)"
+                                aria-disabled="@(Model.YaPendiente ? "true" : "false")"
+                                title="@(Model.YaPendiente ? "Ya tenés una solicitud pendiente" : "Solicitar adopción")">
+                            @(Model.YaPendiente ? "Ya solicitada" : "Solicitar adopción")
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

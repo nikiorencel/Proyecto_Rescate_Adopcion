@@ -30,6 +30,16 @@
             </div>
 
             <div class="mb-3">
+                <label asp-for="Sexo" class="form-label">Sexo</label>
+                <select asp-for="Sexo" class="form-control">
+                    <option value="">Seleccione...</option>
+                    <option value="Macho">Macho</option>
+                    <option value="Hembra">Hembra</option>
+                </select>
+                <span asp-validation-for="Sexo" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
                 <label asp-for="Edad" class="form-label">Edad (en años)</label>
                 <input asp-for="Edad" class="form-control" type="number" min="0" max="40" />
                 <span asp-validation-for="Edad" class="text-danger"></span>

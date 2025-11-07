@@ -13,6 +13,7 @@ namespace Proyecto_Rescate_Adopcion.ViewModels
 
         [StringLength(30)]
         public string? Especie { get; set; }
+        public string? Sexo { get; set; }
 
         [StringLength(100)]
         public string? Localidad { get; set; }

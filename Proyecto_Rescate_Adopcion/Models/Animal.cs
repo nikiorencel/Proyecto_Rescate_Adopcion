@@ -20,6 +20,7 @@ namespace Proyecto_Rescate_Adopcion.Models
         [StringLength(30)]
         [Column("Especie")]
         public string? Especie { get; set; }
+        public string? Sexo { get; set; }
 
         [StringLength(100)]
         [Column("Localidad")]

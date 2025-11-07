@@ -95,6 +95,16 @@
                         <div class="card-body">
                             <p class="name">@a.NombreAnimal</p>
                             <p class="meta">@a.Localidad</p>
+                            <p class="meta">
+                                @(a.Sexo == "Macho" ? "♂ Macho" :
+                                                            a.Sexo == "Hembra" ? "♀ Hembra" : "Sexo: Sin definir")
+                                –
+                                @(
+                                                            a.Edad == null ? "Edad desconocida"
+                                                            : a.Edad == 1 ? "1 año"
+                                                            : $"{a.Edad} años"
+                                                            )
+                            </p>
 
                             @* Opcional: badge si la mascota ya tiene solicitudes *@
                             @if (a.Estado == "Pendiente")
@@ -105,18 +115,11 @@
                             }
                         </div>
 
-                        <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="animalId" value="@a.IdSolicitud" />
+                        <a asp-controller="Animal" asp-action="Details" asp-route-id="@a.IdSolicitud" class="link-detalle">
+                            Ver detalles
+                        </a>
 
-                            <button type="submit"
-                                    class="btn @(pendientes.Contains(a.IdSolicitud) ? "is-disabled" : "")"
-                                    disabled="@(pendientes.Contains(a.IdSolicitud) ? "disabled" : null)"
-                                    aria-disabled="@(pendientes.Contains(a.IdSolicitud) ? "true" : "false")"
-                                    title="@(pendientes.Contains(a.IdSolicitud) ? "Ya tenés una solicitud pendiente" : "Solicitar adopción")">
-                                @(pendientes.Contains(a.IdSolicitud) ? "Ya solicitada" : "Solicitar adopción")
-                            </button>
-                        </form>
+
                     </article>
                 }
             </div>

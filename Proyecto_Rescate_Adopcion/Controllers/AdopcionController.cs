@@ -52,7 +52,7 @@ namespace Proyecto_Rescate_Adopcion.Controllers
 
             await _ctx.SaveChangesAsync();
 
-            TempData["ok"] = "¡Tu solicitud fue registrada!";
+            TempData["ok"] = "🐾 ¡Tu solicitud fue registrada!";
             return RedirectToAction(nameof(MisSolicitudes));
         }
 
@@ -61,6 +61,7 @@ namespace Proyecto_Rescate_Adopcion.Controllers
         public async Task<IActionResult> MisSolicitudes()
         {
             var usuarioId = HttpContext.Session.GetInt32("UsuarioId");
+
             if (usuarioId == null)
                 return RedirectToAction("Login", "Cuenta");
 
