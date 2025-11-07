@@ -1,43 +1,67 @@
-﻿@model Proyecto_Rescate_Adopcion.Models.Animal
+﻿@model Proyecto_Rescate_Adopcion.ViewModels.CrearAnimal
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Registrar Mascota";
+    Layout = "_Layout";
 }
 
-<h1>Create</h1>
+<link rel="stylesheet" href="~/css/site.css" />
 
-<h4>Animal</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+<div class="container">
+    <section class="solicitudes-card" style="max-width: 700px; margin: 40px auto; padding: 28px;">
+        <h2 style="margin-top: 0;">Registrar nueva mascota</h2>
+        <p style="color: #666; margin-bottom: 24px;">
+            Completá los datos para publicar una mascota en adopción.
+        </p>
+
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="NombreAnimal" class="control-label"></label>
-                <input asp-for="NombreAnimal" class="form-control" />
+
+            <div class="mb-3">
+                <label asp-for="NombreAnimal" class="form-label">Nombre</label>
+                <input asp-for="NombreAnimal" class="form-control" placeholder="Ej: Luna" />
                 <span asp-validation-for="NombreAnimal" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="UsuarioSolicitante" class="control-label"></label>
-                <input asp-for="UsuarioSolicitante" class="form-control" />
-                <span asp-validation-for="UsuarioSolicitante" class="text-danger"></span>
+
+            <div class="mb-3">
+                <label asp-for="Especie" class="form-label">Especie</label>
+                <input asp-for="Especie" class="form-control" placeholder="Ej: Perro, Gato..." />
+                <span asp-validation-for="Especie" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Estado" class="control-label"></label>
-                <input asp-for="Estado" class="form-control" />
-                <span asp-validation-for="Estado" class="text-danger"></span>
+
+            <div class="mb-3">
+                <label asp-for="Edad" class="form-label">Edad (en años)</label>
+                <input asp-for="Edad" class="form-control" type="number" min="0" max="40" />
+                <span asp-validation-for="Edad" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+
+            <div class="mb-3">
+                <label asp-for="Localidad" class="form-label">Localidad</label>
+                <input asp-for="Localidad" class="form-control" placeholder="Ej: Buenos Aires" />
+                <span asp-validation-for="Localidad" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Descripcion" class="form-label">Descripción</label>
+                <textarea asp-for="Descripcion" rows="3" class="form-control" placeholder="Contanos un poco sobre la mascota..."></textarea>
+                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Foto</label>
+                <input asp-for="Foto" type="file" />
+            </div>
+
+            <div class="mb-3">
+                <input type="submit" value="Publicar mascota" class="btn" />
+                <a asp-controller="Home" asp-action="Index" class="btn" style="background:#bbb; color:#222; margin-left:10px;">
+                    Cancelar
+                </a>
             </div>
         </form>
-    </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
+    </section>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <partial name="_ValidationScriptsPartial" />
 }

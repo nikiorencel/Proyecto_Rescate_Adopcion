@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Proyecto_Rescate_Adopcion.Context;
 
@@ -11,9 +12,11 @@ using Proyecto_Rescate_Adopcion.Context;
 namespace Proyecto_Rescate_Adopcion.Migrations
 {
     [DbContext(typeof(RescateDBContext))]
-    partial class RescateDBContextModelSnapshot : ModelSnapshot
+    [Migration("20251107014119_AddCamposAAnimales")]
+    partial class AddCamposAAnimales
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,7 +53,9 @@ namespace Proyecto_Rescate_Adopcion.Migrations
 
                     b.HasIndex("AnimalId");
 
-                    b.HasIndex("UsuarioId");
+                    b.HasIndex("UsuarioId", "AnimalId")
+                        .IsUnique()
+                        .HasFilter("[Estado] = 'Pendiente'");
 
                     b.ToTable("Adopciones");
                 });
@@ -79,10 +84,8 @@ namespace Proyecto_Rescate_Adopcion.Migrations
                         .HasColumnName("Especie");
 
                     b.Property<string>("Estado")
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)")
-                        .HasDefaultValue("Disponible")
                         .HasColumnName("Estado");
 
                     b.Property<DateTime>("FechaPublicacion")

@@ -8,8 +8,9 @@
     <header>
         <nav class="navbar">
             <div class="nav-left">
-                <a asp-controller="Home" asp-action="Index"><img src="~/Logo.png" alt="Logo" class="logo" />
-                    </a>
+                <a asp-controller="Home" asp-action="Index">
+                    <img src="~/Logo.png" alt="Logo" class="logo" />
+                </a>
             </div>
             <div class="nav-right">
                 <a asp-controller="Cuenta" asp-action="Login">Cerrar sesión</a>
@@ -21,8 +22,8 @@
         @RenderBody()
     </main>
 
-    <footer>
-        <p>© 2025 - Rescate y Adopción</p>
-    </footer>
+    <footer>...</footer>
+
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

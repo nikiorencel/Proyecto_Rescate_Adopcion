@@ -2,6 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Proyecto_Rescate_Adopcion.Context;
 using Proyecto_Rescate_Adopcion.Models;
+using Proyecto_Rescate_Adopcion.ViewModels;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,10 +13,14 @@ namespace Proyecto_Rescate_Adopcion.Controllers
     public class AnimalController : Controller
     {
         private readonly RescateDBContext _ctx;
-        public AnimalController(RescateDBContext ctx) => _ctx = ctx;
+        private readonly IWebHostEnvironment _env;
+        public AnimalController(RescateDBContext ctx, IWebHostEnvironment env)
+        {
+            _ctx = ctx;
+            _env = env; 
+        }
 
         // GET: /Animal
-        // Soporta filtros opcionales: ?localidad=...&estado=Disponible
         public async Task<IActionResult> Index(string? localidad, string? estado)
         {
             var q = _ctx.Animales.AsQueryable();
@@ -24,7 +31,6 @@ namespace Proyecto_Rescate_Adopcion.Controllers
             if (!string.IsNullOrWhiteSpace(estado))
                 q = q.Where(a => a.Estado == estado);
 
-            // Sugerido: listar disponibles primero
             q = q.OrderBy(a => a.NombreAnimal);
 
             return View(await q.ToListAsync());
@@ -42,25 +48,74 @@ namespace Proyecto_Rescate_Adopcion.Controllers
             return View(animal);
         }
 
-        // GET: /Animal/Create
-        public IActionResult Create() => View();
+        // GET: Animal/Create
+        [HttpGet]
+        public IActionResult Create()
+        {
+            // si usás login por sesión:
+            var uid = HttpContext.Session.GetInt32("UsuarioId");
+            if (uid == null) return RedirectToAction("Login", "Cuenta");
 
-        // POST: /Animal/Create
+            return View(new CrearAnimal());
+        }
+
+        // POST: Animal/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(
-            [Bind("IdSolicitud,NombreAnimal,Especie,Raza,Localidad,Estado,UsuarioSolicitante")]
-            Animal animal)
+        public async Task<IActionResult> Create(CrearAnimal model)
         {
-            if (!ModelState.IsValid) return View(animal);
+            if (!ModelState.IsValid)
+                return View(model);
 
-            // Valor por defecto si tu modelo lo necesita
-            animal.Estado ??= "Disponible";
+            // 1) Subida de foto (opcional)
+            string? fotoUrl = null;
+            if (model.Foto != null && model.Foto.Length > 0)
+            {
+                var uploads = Path.Combine(_env.WebRootPath, "uploads", "animals");
+                Directory.CreateDirectory(uploads);
 
-            _ctx.Add(animal);
+                var fileName = $"{Guid.NewGuid()}{Path.GetExtension(model.Foto.FileName)}";
+                var fullPath = Path.Combine(uploads, fileName);
+
+                using (var fs = new FileStream(fullPath, FileMode.Create))
+                {
+                    await model.Foto.CopyToAsync(fs);
+                }
+
+                fotoUrl = $"/uploads/animals/{fileName}";
+            }
+
+            // 2) Crear entidad con defaults en servidor
+            var entity = new Animal
+            {
+                NombreAnimal = model.NombreAnimal,
+                Especie = model.Especie,
+                Edad = model.Edad,
+                Localidad = model.Localidad,
+                Descripcion = model.Descripcion,
+                FotoUrl = fotoUrl,
+
+                // defaults importantes:
+                Estado = "Disponible",
+                FechaPublicacion = DateTime.Now,
+                UsuarioCreadorId = HttpContext.Session.GetInt32("UsuarioId")
+            };
+
+            _ctx.Animales.Add(entity);
             await _ctx.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            TempData["ok"] = "Mascota publicada correctamente.";
+            return RedirectToAction("Index", "Home");
         }
+
+        public async Task<IActionResult> Index()
+        {
+            var data = await _ctx.Animales
+                .OrderByDescending(a => a.FechaPublicacion)
+                .ToListAsync();
+            return View(data);
+        }
+    
 
         // GET: /Animal/Edit/5
         public async Task<IActionResult> Edit(int? id)

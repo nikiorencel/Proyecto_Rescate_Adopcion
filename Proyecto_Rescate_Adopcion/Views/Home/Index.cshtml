@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Proyecto_Rescate_Adopcion.ViewModels.HomeView
+
+@{
     ViewData["Title"] = "Inicio";
     Layout = "_Layout";
 }
@@ -6,14 +8,37 @@
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
 @{
+
     var pendientes = ViewBag.Pendientes as HashSet<int> ?? new HashSet<int>();
     Func<int, bool> P = id => pendientes.Contains(id);
+    string F(string? foto) => string.IsNullOrWhiteSpace(foto) ? Url.Content("~/placeholder.jpg") : foto!;
 
     Func<int, bool> YaPend = id => pendientes.Contains(id);
     Func<int, string> BtnTxt = id => YaPend(id) ? "Ya solicitada" : "Solicitar adopción";
-    Func<int, string> BtnCls = id => YaPend(id) ? "btn disabled" : "btn";
+    Func<int, string> BtnCls = id => YaPend(id) ? "btn is-disabled" : "btn"; 
     Func<int, string> BtnAttr = id => YaPend(id) ? "disabled=\"disabled\" aria-disabled=\"true\" tabindex=\"-1\"" : "";
     Func<int, string> BtnTtl = id => YaPend(id) ? "Ya tenés una solicitud pendiente" : "Solicitar adopción";
+
+
+    Func<string?, string?, string> PickImg = (foto, especie) =>
+    {
+        if (!string.IsNullOrWhiteSpace(foto)) return foto!;
+        var esp = (especie ?? "").ToLowerInvariant();
+        if (esp.Contains("gato")) return Url.Content("~/Gato1.png");
+        if (esp.Contains("conejo")) return Url.Content("~/Conejo1.png");
+        return Url.Content("~/Perro1.png");
+    };
+
+    bool hayModel = (ViewData.Model != null)
+                    && ViewData.Model.GetType().GetProperty("Animales") != null;
+    var animales = hayModel
+        ? (IEnumerable<dynamic>)(ViewData.Model.GetType().GetProperty("Animales")!.GetValue(ViewData.Model) ?? Enumerable.Empty<object>())
+        : Enumerable.Empty<dynamic>();
+
+    int? Page = hayModel ? (int?)ViewData.Model.GetType().GetProperty("Page")?.GetValue(ViewData.Model) : null;
+    int? TotalPages = hayModel ? (int?)ViewData.Model.GetType().GetProperty("TotalPages")?.GetValue(ViewData.Model) : null;
+    bool HasPrev = hayModel ? ((bool?)ViewData.Model.GetType().GetProperty("HasPrev")?.GetValue(ViewData.Model) ?? false) : false;
+    bool HasNext = hayModel ? ((bool?)ViewData.Model.GetType().GetProperty("HasNext")?.GetValue(ViewData.Model) ?? false) : false;
 }
 
 <div class="container">
@@ -34,7 +59,9 @@
         <div class="qcard">
             <div class="qicon">↗</div>
             <div>
-                <p class="qtitle">Registrar Mascota</p>
+                <a class="qtitle" asp-controller="Animal" asp-action="Create">
+                    Registrar Mascota
+                </a>
                 <p class="qdesc">Da de alta mascotas en adopción con facilidad.</p>
             </div>
         </div>
@@ -56,95 +83,103 @@
         </div>
     </section>
 
-    <!-- MASCOTAS EN ADOPCIÓN -->
-  
     <h3>Mascotas en Adopción</h3>
-    <section class="grid">
-        <article class="card">
-            <img src="~/Perro1.png" alt="Luna" />
-            <div class="card-body">
-                <p class="name">Luna</p>
-                <p class="meta">2 años</p>
-                <p class="meta">Buenos Aires</p>
+    <section class="slider">
+        <button class="nav prev" type="button">&#x276E;</button>
+        <div class="slider-viewport">
+            <div class="slider-track">
+                @foreach (var a in Model.Animales)
+                {
+                    <article class="card">
+                        <img src="@a.FotoUrl" alt="@a.NombreAnimal" />
+                        <div class="card-body">
+                            <p class="name">@a.NombreAnimal</p>
+                            <p class="meta">@a.Localidad</p>
+
+                            @* Opcional: badge si la mascota ya tiene solicitudes *@
+                            @if (a.Estado == "Pendiente")
+                            {
+                                <span class="badge badge--pendiente" style="margin-bottom:8px;display:inline-block;">
+                                    Con solicitudes
+                                </span>
+                            }
+                        </div>
+
+                        <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="animalId" value="@a.IdSolicitud" />
+
+                            <button type="submit"
+                                    class="btn @(pendientes.Contains(a.IdSolicitud) ? "is-disabled" : "")"
+                                    disabled="@(pendientes.Contains(a.IdSolicitud) ? "disabled" : null)"
+                                    aria-disabled="@(pendientes.Contains(a.IdSolicitud) ? "true" : "false")"
+                                    title="@(pendientes.Contains(a.IdSolicitud) ? "Ya tenés una solicitud pendiente" : "Solicitar adopción")">
+                                @(pendientes.Contains(a.IdSolicitud) ? "Ya solicitada" : "Solicitar adopción")
+                            </button>
+                        </form>
+                    </article>
+                }
             </div>
-
-            <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="animalId" value="5" />
-
-                <button type="submit"
-                        class="btn @(P(5) ? "is-disabled" : "")"
-                        disabled="@(P(5) ? "disabled" : null)"
-                        aria-disabled="@(P(5) ? "true" : "false")"
-                        title="@(P(5) ? "Ya tenés una solicitud pendiente" : "Solicitar adopción")">
-                    @(P(5) ? "Ya solicitada" : "Solicitar adopción")
-                </button>
-            </form>
-        </article>
-
-        <article class="card">
-            <img src="~/Gato1.png" alt="Simba" />
-            <div class="card-body">
-                <p class="name">Simba</p>
-                <p class="meta">3 años</p>
-                <p class="meta">Córdoba</p>
-            </div>
-               <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="animalId" value="6" />
-
-                <button type="submit"
-                        class="btn @(P(6) ? "is-disabled" : "")"
-                        disabled="@(P(6) ? "disabled" : null)"
-                        aria-disabled="@(P(6) ? "true" : "false")"
-                        title="@(P(6) ? "Ya tenés una solicitud pendiente" : "Solicitar adopción")">
-                    @(P(6) ? "Ya solicitada" : "Solicitar adopción")
-                </button>
-            </form>
-        </article>
-
-        <article class="card">
-            <img src="~/Perro2.png" alt="Mia" />
-            <div class="card-body">
-                <p class="name">Mia</p>
-                <p class="meta">5 años</p>
-                <p class="meta">Rosario</p>
-            </div>
-           
-            <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="animalId" value="7" />
-
-                <button type="submit"
-                        class="btn @(P(7) ? "is-disabled" : "")"
-                        disabled="@(P(7) ? "disabled" : null)"
-                        aria-disabled="@(P(7) ? "true" : "false")"
-                        title="@(P(7) ? "Ya tenés una solicitud pendiente" : "Solicitar adopción")">
-                    @(P(7) ? "Ya solicitada" : "Solicitar adopción")
-                </button>
-            </form>
-        </article>
-
-        <article class="card">
-            <img src="~/Conejo1.png" alt="Coco" />
-            <div class="card-body">
-                <p class="name">Coco</p>
-                <p class="meta">1 año</p>
-                <p class="meta">Mendoza</p>
-            </div>
-
-            <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="animalId" value="8" />
-
-                <button type="submit"
-                        class="btn @(P(8) ? "is-disabled" : "")"
-                        disabled="@(P(8) ? "disabled" : null)"
-                        aria-disabled="@(P(8) ? "true" : "false")"
-                        title="@(P(8) ? "Ya tenés una solicitud pendiente" : "Solicitar adopción")">
-                    @(P(8) ? "Ya solicitada" : "Solicitar adopción")
-                </button>
-            </form>
-        </article>
+        </div>
+        <button class="nav next" type="button">&#x276F;</button>
     </section>
-</div>
+
+@section Scripts {
+        <script>
+            (() => {
+              const vp   = document.querySelector('.slider-viewport');
+              const trk  = document.querySelector('.slider-track');
+              const prev = document.querySelector('.slider .prev');
+              const next = document.querySelector('.slider .next');
+              if (!vp || !trk || !prev || !next) return;
+
+              const cards = Array.from(trk.children);
+              if (cards.length === 0) return;
+
+              const gap = parseFloat(getComputedStyle(trk).columnGap || getComputedStyle(trk).gap || '16') || 16;
+              let current = 0;
+
+              function visibleCount() {
+                const cw = cards[0].getBoundingClientRect().width;
+                const vw = vp.getBoundingClientRect().width;
+                return Math.max(1, Math.floor((vw + gap) / (cw + gap)));
+              }
+
+              function update() {
+                const cw = cards[0].getBoundingClientRect().width;
+                const n  = visibleCount();
+                const stepWidth = n * cw + (n - 1) * gap;
+                const maxStep = Math.max(0, Math.ceil(cards.length / n) - 1);
+                if (current > maxStep) current = maxStep;
+                trk.style.transform = `translateX(${-current * stepWidth}px)`;
+                prev.disabled = current <= 0;
+                next.disabled = current >= maxStep;
+              }
+
+              prev.addEventListener('click', () => { current = Math.max(0, current - 1); update(); });
+              next.addEventListener('click', () => { current = current + 1; update(); });
+
+              window.addEventListener('resize', () => {
+                trk.style.transform = 'translateX(0)';
+                current = 0;
+                update();
+              });
+
+              // ★ Importante: esperar a que carguen las imágenes para tener ancho real
+              const imgs = trk.querySelectorAll('img');
+              let pending = 0;
+              imgs.forEach(img => {
+                if (!img.complete) { pending++; img.addEventListener('load', onImg, {once:true}); }
+              });
+              function onImg(){ if (--pending <= 0) update(); }
+
+              if (pending === 0) {
+                // ya estaban cacheadas
+                update();
+              } else {
+                // fallback: al terminar de cargar todo
+                window.addEventListener('load', update, {once:true});
+              }
+            })();
+        </script>
+}

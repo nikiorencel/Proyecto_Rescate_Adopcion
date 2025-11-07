@@ -25,7 +25,6 @@ namespace Proyecto_Rescate_Adopcion.Models
         [StringLength(80)]
         public string? Localidad { get; set; }
 
-        // Si querés llevar un número o texto de historial:
         [Display(Name = "Historial de Adopciones")]
         public string? HistorialAdopciones { get; set; }
     }

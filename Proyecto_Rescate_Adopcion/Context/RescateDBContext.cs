@@ -20,15 +20,9 @@ namespace Proyecto_Rescate_Adopcion.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-
-         
-            modelBuilder.Entity<Adopcion>()
-                .HasIndex(a => new { a.UsuarioId, a.AnimalId })
-                .IsUnique()
-                .HasFilter("[Estado] = 'Pendiente'");
-
-            
+            modelBuilder.Entity<Animal>()
+                .Property(a => a.Estado)
+                .HasDefaultValue("Disponible");
         }
     }
 
