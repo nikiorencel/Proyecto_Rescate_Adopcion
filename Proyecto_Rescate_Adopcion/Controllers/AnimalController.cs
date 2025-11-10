@@ -18,10 +18,9 @@ namespace Proyecto_Rescate_Adopcion.Controllers
             _env = env;
         }
 
-        // --- ÚNICO INDEX (con filtros opcionales) ---
         public async Task<IActionResult> Index(string? localidad, string? estado)
         {
-            var q = _ctx.Animales.AsNoTracking().AsQueryable();
+            var q = _ctx.Animales.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(localidad))
                 q = q.Where(a => a.Localidad!.Contains(localidad));
@@ -29,14 +28,11 @@ namespace Proyecto_Rescate_Adopcion.Controllers
             if (!string.IsNullOrWhiteSpace(estado))
                 q = q.Where(a => a.Estado == estado);
 
-            var data = await q
-                .OrderByDescending(a => a.FechaPublicacion)
-                .ToListAsync();
+            q = q.OrderBy(a => a.NombreAnimal);
 
-            return View(data);
+            return View(await q.ToListAsync());
         }
 
-        // --- ÚNICO DETAILS (usa AnimalDetalle) ---
         [HttpGet]
         public async Task<IActionResult> Details(int id, string? returnUrl = null)
         {
@@ -58,7 +54,7 @@ namespace Proyecto_Rescate_Adopcion.Controllers
 
             return View(new AnimalDetalle { Animal = animal, YaPendiente = yaPend });
         }
-        // --- CREATE (igual que tenías) ---
+
         [HttpGet]
         public IActionResult Create()
         {
@@ -111,7 +107,6 @@ namespace Proyecto_Rescate_Adopcion.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // (Edit/Delete si los necesitás, mantenelos, pero no dupliques nombres/firmas)
         private bool AnimalExists(int id) =>
             _ctx.Animales.Any(e => e.IdSolicitud == id);
     }

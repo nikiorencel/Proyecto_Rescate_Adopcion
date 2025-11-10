@@ -1,47 +1,111 @@
 ﻿@model IEnumerable<Proyecto_Rescate_Adopcion.Models.Animal>
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Animales";
+
+    var qLocalidad = Context.Request.Query["localidad"].ToString();
+    var qEstado = Context.Request.Query["estado"].ToString();
+    var total = Model?.Count() ?? 0;
+
+    string Foto(string? f) => string.IsNullOrWhiteSpace(f) ? Url.Content("~/placeholder.jpg") : f!;
+    string EdadTxt(int? e) => (e ?? 0) == 1 ? "1 año" : $"{(e ?? 0)} años";
 }
 
-<h1>Index</h1>
+<div class="admin-container">
+    <div class="admin-head">
+        <h1 class="admin-title">Animales</h1>
+        <span class="pill">@total resultado@(total == 1 ? "" : "s")</span>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NombreAnimal)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UsuarioSolicitante)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Estado)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.NombreAnimal)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UsuarioSolicitante)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Estado)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdSolicitud">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdSolicitud">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdSolicitud">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <form method="get" asp-action="Index" class="toolbar">
+        <div class="toolbar-group">
+            <div class="control">
+                <label>Localidad</label>
+                <input class="input"
+                       type="text"
+                       name="localidad"
+                       value="@qLocalidad"
+                       placeholder="Ej: San Luis, CABA, Rosario..." />
+            </div>
+
+            <div class="control">
+                <label>Estado</label>
+                <select class="input" name="estado">
+                    <option value="" selected="@(string.IsNullOrEmpty(qEstado))">Todos</option>
+                    <option value="Disponible" selected="@(qEstado == "Disponible")">Disponible</option>
+                    <option value="Pendiente" selected="@(qEstado == "Pendiente")">Pendiente</option>
+                    <option value="Adoptado" selected="@(qEstado == "Adoptado")">Adoptado</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="toolbar-actions">
+            <button class="btn primary" type="submit">Buscar</button>
+            @if (!string.IsNullOrWhiteSpace(qLocalidad) || !string.IsNullOrWhiteSpace(qEstado))
+            {
+                <a asp-action="Index" class="btn ghost">Limpiar</a>
+            }
+        </div>
+    </form>
+
+    <div class="actions-row">
+        <a asp-action="Create" class="btn wide primary">Crear nuevo</a>
+    </div>
+
+    @if (total == 0)
+    {
+        <div class="empty-state">
+            <div class="empty-emoji">🐾</div>
+            <div class="empty-title">No encontramos animales con ese filtro</div>
+            <div class="empty-sub">Probá con otra localidad o cambiá el estado.</div>
+        </div>
+    }
+    else
+    {
+        <div class="table-wrap">
+            <table class="table-modern">
+                <thead>
+                    <tr>
+                        <th>Mascota</th>
+                        <th>Localidad</th>
+                        <th>Sexo</th>
+                        <th>Edad</th>
+                        <th class="th-center">Estado</th>
+                        <th class="th-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model)
+                    {
+                        var badgeCls = (a.Estado ?? "").ToLower() switch
+                        {
+                            "disponible" => "badge green",
+                            "adoptado" => "badge gray",
+                            _ => "badge orange" 
+                        };
+                        <tr>
+                            <td>
+                                <div class="cell-animal">
+                                    <img class="thumb" src="@Foto(a.FotoUrl)" alt="@a.NombreAnimal" />
+                                    <a asp-action="Details" asp-route-id="@a.IdSolicitud" class="link-row">
+                                        @a.NombreAnimal
+                                    </a>
+                                </div>
+                            </td>
+
+                            <td>@a.Localidad</td>
+                            <td>@(string.IsNullOrWhiteSpace(a.Sexo) ? "Sin definir" : a.Sexo)</td>
+                            <td>@EdadTxt(a.Edad)</td>
+
+                            <td class="td-center">
+                                <span class="@badgeCls">@a.Estado</span>
+                            </td>
+                            <td class="td-right">
+                                <a asp-action="Details" asp-route-id="@a.IdSolicitud" class="btn ghost">Ver detalles</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

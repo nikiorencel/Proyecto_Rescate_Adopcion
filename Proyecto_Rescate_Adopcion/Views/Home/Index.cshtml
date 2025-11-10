@@ -42,7 +42,7 @@
 }
 
 <div class="container">
-    <!-- HERO -->
+
     <section class="hero">
         <div class="hero-card">
             <h2>Encuentra a tu nueva mascota</h2>
@@ -54,7 +54,7 @@
         </div>
     </section>
 
-    <!-- ACCESOS RÁPIDOS -->
+
     <section class="quick">
         <div class="qcard">
             <div class="qicon">↗</div>
@@ -106,7 +106,7 @@
                                                             )
                             </p>
 
-                            @* Opcional: badge si la mascota ya tiene solicitudes *@
+
                             @if (a.Estado == "Pendiente")
                             {
                                 <span class="badge badge--pendiente" style="margin-bottom:8px;display:inline-block;">
@@ -168,7 +168,7 @@
                 update();
               });
 
-              // ★ Importante: esperar a que carguen las imágenes para tener ancho real
+
               const imgs = trk.querySelectorAll('img');
               let pending = 0;
               imgs.forEach(img => {
@@ -177,10 +177,10 @@
               function onImg(){ if (--pending <= 0) update(); }
 
               if (pending === 0) {
-                // ya estaban cacheadas
+
                 update();
               } else {
-                // fallback: al terminar de cargar todo
+
                 window.addEventListener('load', update, {once:true});
               }
             })();
