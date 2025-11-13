@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Proyecto_Rescate_Adopcion.Context;
 
@@ -11,9 +12,11 @@ using Proyecto_Rescate_Adopcion.Context;
 namespace Proyecto_Rescate_Adopcion.Migrations
 {
     [DbContext(typeof(RescateDBContext))]
-    partial class RescateDBContextModelSnapshot : ModelSnapshot
+    [Migration("20251113022448_AgregarHistorial")]
+    partial class AgregarHistorial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

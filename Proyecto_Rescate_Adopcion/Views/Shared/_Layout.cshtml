@@ -12,18 +12,22 @@
                     <img src="~/Logo.png" alt="Logo" class="logo" />
                 </a>
             </div>
+            <div class="nav-center" style="display: flex; gap: 24px; align-items: center;">
+                <a asp-controller="Home" asp-action="Index" class="nav-link">Inicio</a>
+                <a asp-controller="Animal" asp-action="Create" class="nav-link">Publicar Mascota</a>
+                <a asp-controller="Adopcion" asp-action="MisSolicitudes" class="nav-link">Mis Solicitudes</a>
+                <a asp-controller="Adopcion" asp-action="SolicitudesRecibidas" class="nav-link">Solicitudes Recibidas</a>
+                <a asp-controller="Adopcion" asp-action="Historial" class="nav-link">Historial</a>
+            </div>
             <div class="nav-right">
-                <a asp-controller="Cuenta" asp-action="Login">Cerrar sesión</a>
+                <a asp-controller="Cuenta" asp-action="Logout" class="logout-link">Cerrar sesión</a>
             </div>
         </nav>
     </header>
-
     <main role="main">
         @RenderBody()
     </main>
-
     <footer>...</footer>
-
     @RenderSection("Scripts", required: false)
 </body>
 </html>

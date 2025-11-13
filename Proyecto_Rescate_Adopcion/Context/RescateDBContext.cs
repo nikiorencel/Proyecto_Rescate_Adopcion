@@ -18,6 +18,8 @@ namespace Proyecto_Rescate_Adopcion.Context
         public DbSet<Animal> Animales { get; set; }
         public DbSet<Adopcion> Adopciones { get; set; }
 
+        public DbSet<Historial> Historiales { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Animal>()

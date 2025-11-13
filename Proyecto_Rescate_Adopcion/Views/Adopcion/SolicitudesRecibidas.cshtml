@@ -1,0 +1,130 @@
+﻿@model IEnumerable<Proyecto_Rescate_Adopcion.Models.Adopcion>
+
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<div class="page-solicitudes">
+    <div class="solicitudes-card">
+        <div class="solicitudes-header">
+            <img src="~/Logo.png" alt="" style="width:28px;height:28px;border-radius:8px;">
+            <h2 class="solicitudes-title">Solicitudes recibidas</h2>
+        </div>
+
+        @{
+            var ok = TempData["ok"] as string;
+            var msg = TempData["msg"] as string;
+        }
+
+        @if (!string.IsNullOrEmpty(ok))
+        {
+            <div class="alert success" id="toast-ok">@ok</div>
+        }
+        @if (!string.IsNullOrEmpty(msg))
+        {
+            <div class="alert warn" id="toast-warn">@msg</div>
+        }
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <div class="empty-emoji">📭</div>
+                <div class="empty-title">No hay solicitudes</div>
+                <div class="empty-sub">Cuando alguien solicite adoptar tus mascotas, aparecerán aquí.</div>
+            </div>
+        }
+        else
+        {
+            <table class="solicitudes-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Solicitante</th>
+                        <th>Mascota</th>
+                        <th>Estado</th>
+                        <th style="text-align: center;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in Model)
+                    {
+                        var estado = (s.Estado ?? "Pendiente").ToLower();
+                        var cls = estado switch
+                        {
+                            "aceptada" => "badge badge--aprobada",
+                            "rechazada" => "badge badge--rechazada",
+                            _ => "badge badge--pendiente"
+                        };
+
+                        <tr>
+                            <td>@s.FechaSolicitud.ToString("dd/MM/yyyy HH:mm")</td>
+
+                            <td>
+                                @if (s.Usuario != null)
+                                {
+                                    <div>
+                                        <strong>@s.Usuario.Nombre @s.Usuario.Apellido</strong>
+                                        <div style="font-size: 13px; color: #777;">@s.Usuario.Email</div>
+                                        @if (!string.IsNullOrEmpty(s.Usuario.Localidad))
+                                        {
+                                            <div style="font-size: 12px; color: #999;">📍 @s.Usuario.Localidad</div>
+                                        }
+                                    </div>
+                                }
+                            </td>
+
+                            <td>
+                                @if (s.Animal != null)
+                                {
+                                    <a asp-controller="Animal"
+                                       asp-action="Details"
+                                       asp-route-id="@s.Animal.IdSolicitud"
+                                       class="link-nombre">
+                                        @s.Animal.NombreAnimal
+                                    </a>
+                                    <div style="font-size: 12px; color: #999;">@s.Animal.Especie</div>
+                                }
+                            </td>
+
+                            <td><span class="@cls">@s.Estado</span></td>
+
+                            <td style="text-align: center;">
+                                @if (estado == "pendiente")
+                                {
+                                    <div style="display: flex; gap: 8px; justify-content: center;">
+                                        <form asp-action="Aceptar" asp-route-id="@s.Id" method="post" style="display: inline;">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit"
+                                                    style="background: #28a745; color: white; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px;"
+                                                    onclick="return confirm('¿Confirmar adopción de @s.Animal?.NombreAnimal?')">
+                                                ✓ Aceptar
+                                            </button>
+                                        </form>
+
+                                        <form asp-action="Rechazar" asp-route-id="@s.Id" method="post" style="display: inline;">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit"
+                                                    style="background: #dc3545; color: white; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px;"
+                                                    onclick="return confirm('¿Rechazar solicitud de adopción?')">
+                                                ✗ Rechazar
+                                            </button>
+                                        </form>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span style="color: #999; font-size: 13px;">—</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+<style>
+    .solicitudes-table button:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+        transition: all 0.2s ease;
+    }
+</style>
