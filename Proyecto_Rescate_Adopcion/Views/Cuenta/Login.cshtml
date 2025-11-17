@@ -111,7 +111,7 @@
     <div class="card">
         <h1>RESCATE Y ADOPCIÓN DE MASCOTAS</h1>
 
-        <img src=~/Logo.png" alt="Logo" class="logo" />
+        <img src="~/Logo.png" alt="Logo" class="logo" />
 
         <h2>Iniciar sesión</h2>
 
@@ -125,6 +125,12 @@
 
             <button type="submit">Iniciar sesión</button>
             <a class="link" href="#">¿Olvidaste tu contraseña?</a>
+
+            <a class="link"
+               asp-controller="Usuario"
+               asp-action="Create">
+                ¿Todavía no tenés cuenta? Registrate
+            </a>
 
             @if (ViewBag.Error != null)
             {

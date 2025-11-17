@@ -52,30 +52,18 @@ namespace Proyecto_Rescate_Adopcion.Controllers
         // POST: Usuario/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdUsuario,Nombre,Apellido,Email,Contrasenia,Localidad,HistorialAdopciones")] Usuario usuario)
+        public async Task<IActionResult> Create([Bind("Nombre,Apellido,Email,Contrasenia,Localidad,HistorialAdopciones")] Usuario usuario)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(usuario);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(usuario);
-        }
 
-        // GET: Usuario/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
+                TempData["MensajeRegistro"] = "Tu cuenta fue creada correctamente.";
+
+                return RedirectToAction("Index", "Home");
             }
 
-            var usuario = await _context.Usuarios.FindAsync(id);
-            if (usuario == null)
-            {
-                return NotFound();
-            }
             return View(usuario);
         }
 
