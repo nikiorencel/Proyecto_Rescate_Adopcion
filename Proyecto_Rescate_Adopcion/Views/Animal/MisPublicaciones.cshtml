@@ -1,0 +1,210 @@
+﻿@model IEnumerable<Proyecto_Rescate_Adopcion.Models.Animal>
+
+@{
+    ViewData["Title"] = "Mis publicaciones";
+    Layout = "_Layout";
+}
+
+<style>
+    .mispubli-wrapper {
+        max-width: 1100px;
+        margin: 24px auto 40px;
+        padding: 0 16px;
+    }
+
+    .mispubli-header h2 {
+        font-size: 26px;
+        margin-bottom: 4px;
+    }
+
+    .mispubli-header p {
+        margin: 0 0 18px;
+        color: #666;
+    }
+
+    .publicaciones-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 18px;
+    }
+
+    .pub-card {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, .06);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pub-card img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .pub-body {
+        padding: 12px 14px 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .pub-name {
+        font-weight: 700;
+        font-size: 18px;
+    }
+
+    .pub-meta {
+        font-size: 14px;
+        color: #666;
+    }
+
+    .pub-meta span + span::before {
+        content: " · ";
+        margin: 0 4px;
+        color: #bbb;
+    }
+
+    .pub-footer {
+        padding: 10px 14px 12px;
+        border-top: 1px solid #f0f0f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+    }
+
+    .badge-estado {
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge-estado--disponible {
+        background: #e6f7e9;
+        color: #1b7d3f;
+    }
+
+    .badge-estado--pendiente {
+        background: #fff4e0;
+        color: #c97a14;
+    }
+
+    .badge-estado--adoptado {
+        background: #e8ecff;
+        color: #2b4acb;
+    }
+
+    .pub-actions {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .pub-link {
+        text-decoration: none;
+        border-radius: 999px;
+        padding: 4px 10px;
+        border: 1px solid #ddd;
+        font-size: 13px;
+    }
+
+    .pub-link:hover {
+        background: #f6f6f6;
+    }
+
+    .pub-link--danger {
+        border-color: #f3b5b5;
+        color: #b63232;
+    }
+
+    .pub-link--danger:hover {
+        background: #ffecec;
+    }
+
+    .mispubli-empty {
+        margin-top: 18px;
+        color: #666;
+    }
+</style>
+
+<div class="mispubli-wrapper">
+    <div class="mispubli-header">
+        <h2>Mis publicaciones</h2>
+        <p>Aquí podés ver y administrar las mascotas que publicaste en adopción.</p>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <p class="mispubli-empty">
+            Todavía no publicaste ninguna mascota. Podés hacerlo desde
+            <a asp-controller="Animal" asp-action="Create">“Publicar Mascota”</a>.
+        </p>
+    }
+    else
+    {
+        <div class="publicaciones-grid">
+            @foreach (var item in Model)
+            {
+                var estado = (item.Estado ?? "Disponible").ToLower();
+                var badgeClass = estado switch
+                {
+                    "disponible" => "badge-estado badge-estado--disponible",
+                    "pendiente" => "badge-estado badge-estado--pendiente",
+                    "adoptado" => "badge-estado badge-estado--adoptado",
+                    _ => "badge-estado"
+                };
+
+                <article class="pub-card">
+                    @if (!string.IsNullOrWhiteSpace(item.FotoUrl))
+                    {
+                        <img src="@item.FotoUrl" alt="@item.NombreAnimal" />
+                    }
+
+                    <div class="pub-body">
+                        <div class="pub-name">@item.NombreAnimal</div>
+                        <div class="pub-meta">
+                            <span>@item.Especie</span>
+                            @if (!string.IsNullOrWhiteSpace(item.Sexo))
+                            {
+                                <span>@item.Sexo</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(item.Localidad))
+                            {
+                                <span>@item.Localidad</span>
+                            }
+                        </div>
+                        <div class="pub-meta">
+                            Publicado el @item.FechaPublicacion.ToString("dd/MM/yyyy")
+                        </div>
+                    </div>
+
+                    <div class="pub-footer">
+                        <span class="@badgeClass">@item.Estado</span>
+                        <div class="pub-actions">
+                            <a asp-action="Details"
+                               asp-route-id="@item.IdSolicitud"
+                               class="pub-link">
+                                Ver
+                            </a>
+                            <a asp-action="Edit"
+                               asp-route-id="@item.IdSolicitud"
+                               class="pub-link">
+                                Editar
+                            </a>
+                            <a asp-action="Delete"
+                               asp-route-id="@item.IdSolicitud"
+                               class="pub-link pub-link--danger">
+                                Dar de baja
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+    }
+</div>

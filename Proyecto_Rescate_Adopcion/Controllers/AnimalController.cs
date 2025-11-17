@@ -33,6 +33,22 @@ namespace Proyecto_Rescate_Adopcion.Controllers
             return View(await q.ToListAsync());
         }
 
+        public async Task<IActionResult> MisPublicaciones()
+        {
+            var uid = HttpContext.Session.GetInt32("UsuarioId");
+            if (uid == null)
+            {
+                return RedirectToAction("Login", "Cuenta");
+            }
+
+            var publicaciones = await _ctx.Animales
+                .Where(a => a.UsuarioCreadorId == uid.Value)
+                .OrderByDescending(a => a.FechaPublicacion)
+                .ToListAsync();
+
+            return View(publicaciones);
+        }
+
         [HttpGet]
         public async Task<IActionResult> Details(int id, string? returnUrl = null)
         {
