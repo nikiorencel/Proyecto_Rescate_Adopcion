@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Proyecto_Rescate_Adopcion.Context;
 using Proyecto_Rescate_Adopcion.Models;
 using Proyecto_Rescate_Adopcion.ViewModels;
-using Microsoft.AspNetCore.Hosting;
 
 namespace Proyecto_Rescate_Adopcion.Controllers
 {
@@ -157,7 +156,7 @@ namespace Proyecto_Rescate_Adopcion.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdSolicitud,NombreAnimal,Edad,Especie,Sexo,Localidad,Descripcion,Estado")] Animal model)
+        public async Task<IActionResult> Edit(int id, Animal model, IFormFile? Foto)
         {
             var uid = HttpContext.Session.GetInt32("UsuarioId");
             if (uid == null)
@@ -184,6 +183,31 @@ namespace Proyecto_Rescate_Adopcion.Controllers
             if (animal.UsuarioCreadorId != uid.Value)
             {
                 return Forbid();
+            }
+
+            if (Foto != null && Foto.Length > 0)
+            {
+                var uploads = Path.Combine(_env.WebRootPath, "uploads", "animals");
+                Directory.CreateDirectory(uploads);
+
+                var fileName = $"{Guid.NewGuid()}{Path.GetExtension(Foto.FileName)}";
+                var fullPath = Path.Combine(uploads, fileName);
+
+                using (var fs = new FileStream(fullPath, FileMode.Create))
+                {
+                    await Foto.CopyToAsync(fs);
+                }
+
+                if (!string.IsNullOrEmpty(animal.FotoUrl))
+                {
+                    var oldPath = Path.Combine(_env.WebRootPath, animal.FotoUrl.TrimStart('/'));
+                    if (System.IO.File.Exists(oldPath))
+                    {
+                        System.IO.File.Delete(oldPath);
+                    }
+                }
+
+                animal.FotoUrl = $"/uploads/animals/{fileName}";
             }
 
             animal.NombreAnimal = model.NombreAnimal;

@@ -21,6 +21,8 @@ namespace Proyecto_Rescate_Adopcion.Models
         [Column("Especie")]
         public string? Especie { get; set; }
 
+        [NotMapped]
+        public IFormFile? NuevaFoto { get; set; }
 
         [StringLength(10)]
         [Column("Sexo")]  // ← AGREGADO
