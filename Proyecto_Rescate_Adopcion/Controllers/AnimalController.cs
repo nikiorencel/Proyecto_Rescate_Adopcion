@@ -58,17 +58,26 @@ namespace Proyecto_Rescate_Adopcion.Controllers
 
             var usuarioId = HttpContext.Session.GetInt32("UsuarioId");
             var yaPend = false;
+            var esPropia = false;
+
             if (usuarioId != null)
             {
                 yaPend = await _ctx.Adopciones
                    .AnyAsync(x => x.UsuarioId == usuarioId.Value
                                && x.AnimalId == id
                                && (x.Estado ?? "Pendiente") == "Pendiente");
+
+                esPropia = (animal.UsuarioCreadorId == usuarioId.Value);
             }
 
             ViewBag.ReturnUrl = returnUrl;
 
-            return View(new AnimalDetalle { Animal = animal, YaPendiente = yaPend });
+            return View(new AnimalDetalle
+            {
+                Animal = animal,
+                YaPendiente = yaPend,
+                EsPublicacionPropia = esPropia
+            });
         }
 
         [HttpGet]

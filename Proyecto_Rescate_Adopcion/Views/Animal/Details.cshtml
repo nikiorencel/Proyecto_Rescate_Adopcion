@@ -37,7 +37,8 @@
                    style="background:#bbb;color:#222;">
                     Volver
                 </a>
-
+                @if (!Model.EsPublicacionPropia)
+                {
                     <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="animalId" value="@Model.Animal.IdSolicitud" />
@@ -49,8 +50,15 @@
                             @(Model.YaPendiente ? "Ya solicitada" : "Solicitar adopción")
                         </button>
                     </form>
-                </div>
+                }
+                else
+                {
+                    <p style="margin-top:12px;color:#777;font-size:15px;">
+                        Esta es una publicación tuya. No podés solicitar su adopción.
+                    </p>
+                }
             </div>
         </div>
     </div>
+</div>
 </div>
