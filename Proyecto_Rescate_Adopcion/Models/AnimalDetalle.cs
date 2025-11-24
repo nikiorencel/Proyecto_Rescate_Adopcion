@@ -4,5 +4,6 @@
     {
         public Models.Animal Animal { get; set; } = null!;
         public bool YaPendiente { get; set; }
+        public bool EsPublicacionPropia { get; set; }
     }
 }
