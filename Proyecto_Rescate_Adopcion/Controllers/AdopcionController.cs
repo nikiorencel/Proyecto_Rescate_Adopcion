@@ -18,6 +18,16 @@ namespace Proyecto_Rescate_Adopcion.Controllers
             if (usuarioId == null)
                 return RedirectToAction("Login", "Cuenta");
 
+            var animal = await _ctx.Animales.FirstOrDefaultAsync(a => a.IdSolicitud == animalId);
+            if (animal == null)
+                return NotFound();
+
+            if (animal.UsuarioCreadorId == usuarioId.Value)
+            {
+                TempData["msg"] = "No podés solicitar la adopción de una mascota que vos mismo publicaste.";
+                return RedirectToAction("Details", "Animal", new { id = animalId });
+            }
+
             bool yaExistePendiente = await _ctx.Adopciones.AnyAsync(a =>
                 a.UsuarioId == usuarioId.Value &&
                 a.AnimalId == animalId &&
@@ -39,12 +49,8 @@ namespace Proyecto_Rescate_Adopcion.Controllers
 
             _ctx.Adopciones.Add(s);
 
-            var animal = await _ctx.Animales.FirstOrDefaultAsync(a => a.IdSolicitud == animalId);
-            if (animal != null)
-            {
-                if (string.IsNullOrEmpty(animal.Estado) || animal.Estado == "Disponible")
-                    animal.Estado = "Pendiente";
-            }
+            if (string.IsNullOrEmpty(animal.Estado) || animal.Estado == "Disponible")
+                animal.Estado = "Pendiente";
 
             await _ctx.SaveChangesAsync();
 
