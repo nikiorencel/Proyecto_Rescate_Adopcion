@@ -123,6 +123,74 @@ namespace Proyecto_Rescate_Adopcion.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var uid = HttpContext.Session.GetInt32("UsuarioId");
+            if (uid == null)
+            {
+                return RedirectToAction("Login", "Cuenta");
+            }
+
+            var animal = await _ctx.Animales.FindAsync(id);
+            if (animal == null)
+            {
+                return NotFound();
+            }
+
+            if (animal.UsuarioCreadorId != uid.Value)
+            {
+                return Forbid();
+            }
+
+            return View(animal);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("IdSolicitud,NombreAnimal,Edad,Especie,Sexo,Localidad,Descripcion,Estado")] Animal model)
+        {
+            var uid = HttpContext.Session.GetInt32("UsuarioId");
+            if (uid == null)
+            {
+                return RedirectToAction("Login", "Cuenta");
+            }
+
+            if (id != model.IdSolicitud)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var animal = await _ctx.Animales.FirstOrDefaultAsync(a => a.IdSolicitud == id);
+            if (animal == null)
+            {
+                return NotFound();
+            }
+
+            if (animal.UsuarioCreadorId != uid.Value)
+            {
+                return Forbid();
+            }
+
+            animal.NombreAnimal = model.NombreAnimal;
+            animal.Edad = model.Edad;
+            animal.Especie = model.Especie;
+            animal.Sexo = model.Sexo;
+            animal.Localidad = model.Localidad;
+            animal.Descripcion = model.Descripcion;
+            animal.Estado = model.Estado;
+
+            await _ctx.SaveChangesAsync();
+
+            TempData["ok"] = "Publicación actualizada correctamente.";
+            return RedirectToAction("MisPublicaciones");
+        }
+
         private bool AnimalExists(int id) =>
             _ctx.Animales.Any(e => e.IdSolicitud == id);
     }

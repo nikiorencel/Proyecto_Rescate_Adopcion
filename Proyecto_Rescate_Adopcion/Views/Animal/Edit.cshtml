@@ -1,44 +1,93 @@
 ﻿@model Proyecto_Rescate_Adopcion.Models.Animal
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar publicación";
+    Layout = "_Layout";
 }
 
-<h1>Edit</h1>
+<h2>Editar publicación</h2>
+<p>Actualizá la información de la mascota publicada.</p>
 
-<h4>Animal</h4>
 <hr />
+
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="IdSolicitud" />
-            <div class="form-group">
-                <label asp-for="NombreAnimal" class="control-label"></label>
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group mb-2">
+                <label asp-for="NombreAnimal" class="control-label">Nombre</label>
                 <input asp-for="NombreAnimal" class="form-control" />
                 <span asp-validation-for="NombreAnimal" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="UsuarioSolicitante" class="control-label"></label>
-                <input asp-for="UsuarioSolicitante" class="form-control" />
-                <span asp-validation-for="UsuarioSolicitante" class="text-danger"></span>
+
+            <div class="form-group mb-2">
+                <label asp-for="Especie" class="control-label">Especie</label>
+                <input asp-for="Especie" class="form-control" />
+                <span asp-validation-for="Especie" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Estado" class="control-label"></label>
-                <input asp-for="Estado" class="form-control" />
+
+            <div class="form-group mb-2">
+                <label asp-for="Sexo" class="control-label">Sexo</label>
+                <select asp-for="Sexo" class="form-control">
+                    <option value="">Sin definir</option>
+                    <option value="Macho">Macho</option>
+                    <option value="Hembra">Hembra</option>
+                </select>
+                <span asp-validation-for="Sexo" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="Edad" class="control-label">Edad (años)</label>
+                <input asp-for="Edad" type="number" class="form-control" />
+                <span asp-validation-for="Edad" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="Localidad" class="control-label">Localidad</label>
+                <input asp-for="Localidad" class="form-control" />
+                <span asp-validation-for="Localidad" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="Descripcion" class="control-label">Descripción</label>
+                <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Estado" class="control-label">Estado</label>
+                <select asp-for="Estado" class="form-control">
+                    <option value="Disponible">Disponible</option>
+                    <option value="Pendiente">En proceso de adopción</option>
+                    <option value="Adoptado">Adoptado</option>
+                    <option value="Retirado">Retirado</option>
+                </select>
                 <span asp-validation-for="Estado" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Guardar cambios" class="btn btn-primary" />
+                <a asp-action="MisPublicaciones" class="btn btn-secondary">Cancelar</a>
             </div>
         </form>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+    <div class="col-md-4">
+        @if (!string.IsNullOrWhiteSpace(Model.FotoUrl))
+        {
+            <p><strong>Foto actual</strong></p>
+            <img src="@Model.FotoUrl"
+                 alt="@Model.NombreAnimal"
+                 style="max-width:100%;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.12);" />
+        }
+    </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
