@@ -191,6 +191,58 @@ namespace Proyecto_Rescate_Adopcion.Controllers
             return RedirectToAction("MisPublicaciones");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var uid = HttpContext.Session.GetInt32("UsuarioId");
+            if (uid == null)
+            {
+                return RedirectToAction("Login", "Cuenta");
+            }
+
+            var animal = await _ctx.Animales.AsNoTracking()
+                .FirstOrDefaultAsync(a => a.IdSolicitud == id);
+
+            if (animal == null)
+            {
+                return NotFound();
+            }
+
+            if (animal.UsuarioCreadorId != uid.Value)
+            {
+                return Forbid();
+            }
+
+            return View(animal);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var uid = HttpContext.Session.GetInt32("UsuarioId");
+            if (uid == null)
+            {
+                return RedirectToAction("Login", "Cuenta");
+            }
+
+            var animal = await _ctx.Animales.FirstOrDefaultAsync(a => a.IdSolicitud == id);
+            if (animal == null)
+            {
+                return NotFound();
+            }
+
+            if (animal.UsuarioCreadorId != uid.Value)
+            {
+                return Forbid();
+            }
+
+            animal.Estado = "Retirado";
+            await _ctx.SaveChangesAsync();
+
+            TempData["ok"] = "La publicación fue dada de baja.";
+            return RedirectToAction("MisPublicaciones");
+        }
         private bool AnimalExists(int id) =>
             _ctx.Animales.Any(e => e.IdSolicitud == id);
     }

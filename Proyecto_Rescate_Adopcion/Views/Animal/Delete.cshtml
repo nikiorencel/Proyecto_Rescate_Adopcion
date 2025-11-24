@@ -1,39 +1,47 @@
 ﻿@model Proyecto_Rescate_Adopcion.Models.Animal
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Dar de baja publicación";
+    Layout = "_Layout";
 }
 
-<h1>Delete</h1>
+<h2>Dar de baja publicación</h2>
+<p>¿Estás seguro de que querés dar de baja esta publicación? La mascota dejará de aparecer como disponible.</p>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Animal</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NombreAnimal)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NombreAnimal)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UsuarioSolicitante)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UsuarioSolicitante)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Estado)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Estado)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="IdSolicitud" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <dl class="row">
+            <dt class="col-sm-4">Nombre</dt>
+            <dd class="col-sm-8">@Model.NombreAnimal</dd>
+
+            <dt class="col-sm-4">Especie</dt>
+            <dd class="col-sm-8">@Model.Especie</dd>
+
+            <dt class="col-sm-4">Sexo</dt>
+            <dd class="col-sm-8">@Model.Sexo</dd>
+
+            <dt class="col-sm-4">Localidad</dt>
+            <dd class="col-sm-8">@Model.Localidad</dd>
+
+            <dt class="col-sm-4">Estado actual</dt>
+            <dd class="col-sm-8">@Model.Estado</dd>
+        </dl>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="IdSolicitud" />
+            <button type="submit" class="btn btn-danger">Sí, dar de baja</button>
+            <a asp-action="MisPublicaciones" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+
+    <div class="col-md-4">
+        @if (!string.IsNullOrWhiteSpace(Model.FotoUrl))
+        {
+            <img src="@Model.FotoUrl"
+                 alt="@Model.NombreAnimal"
+                 style="max-width:100%;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.12);" />
+        }
+    </div>
 </div>
