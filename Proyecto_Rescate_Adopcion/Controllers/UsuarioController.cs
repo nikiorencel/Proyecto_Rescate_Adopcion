@@ -43,6 +43,40 @@ namespace Proyecto_Rescate_Adopcion.Controllers
             return View(usuario);
         }
 
+        // NUEVO: GET: Usuario/Perfil/5 - Perfil público del rescatista
+        public async Task<IActionResult> Perfil(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var usuario = await _context.Usuarios
+                .FirstOrDefaultAsync(m => m.IdUsuario == id);
+
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            // Obtener las mascotas publicadas por este rescatista
+            var mascotas = await _context.Animales
+                .Where(a => a.UsuarioCreadorId == id && a.Estado != "Retirado" && a.Estado != "Eliminado")
+                .OrderByDescending(a => a.FechaPublicacion)
+                .ToListAsync();
+
+            // Contar adopciones exitosas
+            var adopcionesExitosas = await _context.Adopciones
+                .Include(a => a.Animal)
+                .Where(a => a.Animal!.UsuarioCreadorId == id && a.Estado == "Aceptada")
+                .CountAsync();
+
+            ViewBag.Mascotas = mascotas;
+            ViewBag.AdopcionesExitosas = adopcionesExitosas;
+
+            return View(usuario);
+        }
+
         // GET: Usuario/Create
         public IActionResult Create()
         {
