@@ -1,54 +1,78 @@
-﻿@model Proyecto_Rescate_Adopcion.Models.Usuario
+﻿@model Proyecto_Rescate_Adopcion.Models.AnimalDetalle
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Model.Animal.NombreAnimal;
+    Layout = "_Layout";
+    string Foto(string? f) => string.IsNullOrWhiteSpace(f) ? Url.Content("~/placeholder.jpg") : f!;
+    string EdadTxt(int? e) => (e ?? 0) == 1 ? "1 año" : $"{(e ?? 0)} años";
+    string SexoTxt(string? s) => string.IsNullOrWhiteSpace(s) ? "Sexo: sin definir" : $"Sexo: {s}";
 }
 
-<h1>Details</h1>
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
-<div>
-    <h4>Usuario</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nombre)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Apellido)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Apellido)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Contrasenia)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Contrasenia)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Localidad)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Localidad)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.HistorialAdopciones)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.HistorialAdopciones)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.IdUsuario">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="container" style="max-width:980px;margin:24px auto;">
+    <div class="solicitudes-card" style="overflow:hidden;">
+        <div class="solicitudes-header">
+            <img src="~/Logo.png" alt="" style="width:28px;height:28px;border-radius:8px;">
+            <h2 class="solicitudes-title">@Model.Animal.NombreAnimal</h2>
+        </div>
+
+        <div style="display:grid;grid-template-columns:360px 1fr;gap:22px;padding:18px;">
+            <img src="@Foto(Model.Animal.FotoUrl)" alt="@Model.Animal.NombreAnimal"
+                 style="width:100%;height:280px;object-fit:cover;border-radius:12px;border:1px solid #eee;" />
+
+            <div>
+                <p class="meta" style="margin:0 0 6px;">@EdadTxt(Model.Animal.Edad)</p>
+                <p class="meta" style="margin:0 0 6px;">@SexoTxt(Model.Animal.Sexo)</p>
+                <p class="meta" style="margin:0 0 6px;">@Model.Animal.Especie</p>
+                <p class="meta" style="margin:0 0 6px;">@Model.Animal.Localidad</p>
+
+                <!-- NUEVO: Información del rescatista -->
+                @if (Model.Animal.UsuarioCreadorId != null)
+                {
+                    <div style="margin: 16px 0; padding: 12px; background: #f8f9fa; border-radius: 10px; border-left: 3px solid #ff7a00;">
+                        <p style="margin: 0 0 4px; font-size: 12px; color: #666; font-weight: 600;">PUBLICADO POR</p>
+                        <a asp-controller="Usuario"
+                           asp-action="Perfil"
+                           asp-route-id="@Model.Animal.UsuarioCreadorId"
+                           style="color: #ff7a00; font-weight: 700; text-decoration: none; font-size: 15px;">
+                            Ver perfil del rescatista →
+                        </a>
+                    </div>
+                }
+
+                <p style="margin:12px 0 18px;color:#444;">
+                    @(string.IsNullOrWhiteSpace(Model.Animal.Descripcion)
+                                        ? "Sin descripción."
+                                        : Model.Animal.Descripcion)
+                </p>
+
+                <a href="@(ViewBag.ReturnUrl ?? Url.Action("Index", "Home"))"
+                   class="btn"
+                   style="background:#bbb;color:#222;">
+                    Volver
+                </a>
+                @if (!Model.EsPublicacionPropia)
+                {
+                    <form asp-controller="Adopcion" asp-action="Solicitar" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="animalId" value="@Model.Animal.IdSolicitud" />
+                        <button type="submit"
+                                class="btn @(Model.YaPendiente ? "is-disabled" : "")"
+                                disabled="@(Model.YaPendiente ? "disabled" : null)"
+                                aria-disabled="@(Model.YaPendiente ? "true" : "false")"
+                                title="@(Model.YaPendiente ? "Ya tenés una solicitud pendiente" : "Solicitar adopción")">
+                            @(Model.YaPendiente ? "Ya solicitada" : "Solicitar adopción")
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <p style="margin-top:12px;color:#777;font-size:15px;">
+                        Esta es una publicación tuya. No podés solicitar su adopción.
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
 </div>
